@@ -1,0 +1,18 @@
+[config]
+base_image = "base_image_name"
+user = "image_user"
+runner_base_name = "base_name_to_prefix"
+repository_url = "https://github.com/org/repo"
+# GitHub application information
+app_id = "app_id"
+# relative to this config file
+private_key_path = "private.pem"
+installation_id = "this value is so annoying to get"
+# apple limits the max here to 2. So you really can only choose 1 or 2 :)
+num_vms = 1
+# Tune this based on your number of VMs and underlying mac.
+# e.g. an M1 mini has 4 efficiency and 4 performance cores, so if
+# you're running 2 VMs you'll want to set CPUs to 4 probably.
+cpus = 4
+memory = 6144
+labels = "comma,separated,labels,no-spaces"

@@ -1,0 +1,6 @@
+-r requirements.txt
+trio-typing
+types-toml
+ruff
+mypy
+black

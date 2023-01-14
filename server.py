@@ -113,7 +113,7 @@ async def get_tart_ip(runner_name: str, retries: int) -> str:
     return result.stdout.decode("ascii").strip()
 
 
-async def check_tart_presence() -> None:
+async def startup_checks() -> None:
     try:
         await trio.run_process(
             ["tart", "--version"], capture_stdout=True, capture_stderr=True
@@ -123,6 +123,10 @@ async def check_tart_presence() -> None:
             "Could not find tart. Is homebrew in your PATH? Executing in a non-login"
             f"shell frequently causes this. Your current PATH is: {os.environ['PATH']}"
         )
+        sys.exit(1)
+
+    if not os.path.isfile(os.path.join(BASE_DIR, "actions-runner.tar.gz")):
+        print("Could not find actions-runner.tar.gz. Check the readme.")
         sys.exit(1)
 
 
@@ -214,7 +218,7 @@ async def runner(config):
 
 
 async def main(config: typing.Dict):
-    await check_tart_presence()
+    await startup_checks()
 
     async def keep_one_runner_running():
         while True:

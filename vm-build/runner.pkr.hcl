@@ -61,7 +61,9 @@ build {
     ]
   }
 
-  //create a /Users/runner to see if we can trick GH into installing things in the toolcache
+  //create a /Users/runner to trick GH into installing things in the toolcache
+  //this makes setup-python work. the right fix is to rename the user, but
+  //that's more work.
   provisioner "shell" {
     inline = [
       "sudo mkdir /Users/runner",

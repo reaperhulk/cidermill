@@ -156,6 +156,12 @@ async def scp_actions_runner(config: typing.Dict, ip: str) -> None:
     print("Copied files to VM")
 
 
+async def signal_handler():
+    with trio.open_signal_receiver(signal.SIGINT, signal.SIGTERM) as signal_aiter:
+        async for _ in signal_aiter:
+            raise SystemExit("Received SIGINT or SIGTERM, shutting down")
+
+
 async def log_output(runner_process: trio.Process, runner_name: str):
     decoder = codecs.getincrementaldecoder("utf8")()
     assert runner_process.stdout is not None
@@ -225,9 +231,6 @@ async def runner(config):
 
 
 async def main(config: typing.Dict):
-    # In launchd we'll get a SIGTERM. Trio handles SIGINT really well, so we just
-    # handle SIGTERM by swallowing it and raising a SIGINT.
-    signal.signal(signal.SIGTERM, lambda sig, frame: signal.raise_signal(signal.SIGINT))
     await startup_checks()
 
     async def keep_one_runner_running():
@@ -235,6 +238,7 @@ async def main(config: typing.Dict):
             await runner(config)
 
     async with trio.open_nursery() as nursery:
+        nursery.start_soon(signal_handler)
         for _ in range(config["num_vms"]):
             nursery.start_soon(keep_one_runner_running)
 

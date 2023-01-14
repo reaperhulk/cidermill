@@ -15,6 +15,12 @@ import trio
 
 BASE_DIR = os.path.dirname(__file__)
 
+try:
+    with open(os.path.join(BASE_DIR, ".path"), "r") as f:
+        os.environ["PATH"] = f.read().strip()
+except FileNotFoundError:
+    pass
+
 
 def load_config() -> typing.Dict:
     config = toml.load(os.path.join(BASE_DIR, "config.toml"))["config"]
@@ -140,7 +146,7 @@ async def scp_actions_runner(config: typing.Dict, ip: str) -> None:
             "-o",
             "UserKnownHostsFile=/dev/null",
             os.path.join(BASE_DIR, "actions-runner.tar.gz"),
-            os.path.join(BASE_DIR, "runner-launcher.sh"),
+            os.path.join(BASE_DIR, "files", "runner-launcher.sh"),
             f"{config['user']}@{ip}:~/",
         ],
         capture_stdout=True,

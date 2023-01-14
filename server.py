@@ -34,6 +34,10 @@ def load_config() -> typing.Dict:
     return config
 
 
+def log(data):
+    print(data, flush=True)
+
+
 async def generate_jwt(config: typing.Dict) -> str:
     instance = jwt.JWT()
     payload = {
@@ -49,7 +53,7 @@ async def generate_jwt(config: typing.Dict) -> str:
 
 
 async def get_registration_token(config: typing.Dict) -> str:
-    print("Requesting new runner registration-token to github ...")
+    log("Requesting new runner registration-token to github ...")
     app_token = await generate_jwt(config)
     async with httpx.AsyncClient() as client:
         res = await client.post(
@@ -69,7 +73,7 @@ async def get_registration_token(config: typing.Dict) -> str:
             },
         )
         response_data = res.json()
-    print(
+    log(
         f"New registration token is {response_data['token']} and "
         f"expires at {response_data['expires_at']}"
     )
@@ -79,12 +83,12 @@ async def get_registration_token(config: typing.Dict) -> str:
 async def provision_tart_vm(config: typing.Dict):
     random = binascii.hexlify(os.urandom(4)).decode("ascii")
     runner_name = f"{config['runner_base_name']}-{random}"
-    print(f"Provisioning: {runner_name}")
+    log(f"Provisioning: {runner_name}")
     result = await trio.run_process(
         ["tart", "clone", config["base_image"], runner_name]
     )
     if result.returncode != 0:
-        print("Failed to clone tart image")
+        log("Failed to clone tart image")
         sys.exit(1)
     result = await trio.run_process(
         [
@@ -98,7 +102,7 @@ async def provision_tart_vm(config: typing.Dict):
         ]
     )
     if result.returncode != 0:
-        print("Failed to set limits on tart image")
+        log("Failed to set limits on tart image")
         sys.exit(1)
 
     return runner_name
@@ -126,19 +130,19 @@ async def startup_checks() -> None:
             ["tart", "--version"], capture_stdout=True, capture_stderr=True
         )
     except FileNotFoundError:
-        print(
+        log(
             "Could not find tart. Is homebrew in your PATH? Executing in a non-login"
             f"shell frequently causes this. Your current PATH is: {os.environ['PATH']}"
         )
         sys.exit(1)
 
     if not os.path.isfile(os.path.join(BASE_DIR, "actions-runner.tar.gz")):
-        print("Could not find actions-runner.tar.gz. Check the readme.")
+        log("Could not find actions-runner.tar.gz. Check the readme.")
         sys.exit(1)
 
 
 async def scp_actions_runner(config: typing.Dict, ip: str) -> None:
-    print("Copying files to VM")
+    log("Copying files to VM")
     await trio.run_process(
         [
             "scp",
@@ -153,7 +157,7 @@ async def scp_actions_runner(config: typing.Dict, ip: str) -> None:
         capture_stdout=True,
         capture_stderr=True,
     )
-    print("Copied files to VM")
+    log("Copied files to VM")
 
 
 async def signal_handler():
@@ -168,7 +172,7 @@ async def log_output(runner_process: trio.Process, runner_name: str):
     async for b in runner_process.stdout:
         # Multiple runners may interleave their output so we
         # prefix with runner name.
-        print(textwrap.indent(decoder.decode(b), f"{runner_name}: "))
+        log(textwrap.indent(decoder.decode(b), f"{runner_name}: "))
 
 
 async def run_vm_then_cancel(runner_name: str, cancel_scope):
@@ -184,7 +188,7 @@ async def run_runner_then_cancel(config: typing.Dict, runner_name: str, cancel_s
             ip = await get_tart_ip(runner_name, 4)
             await scp_actions_runner(config, ip)
             token = await get_registration_token(config)
-            print("Launching runner...")
+            log("Launching runner...")
             runner_process: trio.Process = await nursery.start(
                 partial(
                     trio.run_process,

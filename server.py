@@ -1,6 +1,7 @@
 import binascii
 import codecs
 import os
+import signal
 import subprocess
 import sys
 import textwrap
@@ -224,6 +225,9 @@ async def runner(config):
 
 
 async def main(config: typing.Dict):
+    # In launchd we'll get a SIGTERM. Trio handles SIGINT really well, so we just
+    # handle SIGTERM by swallowing it and raising a SIGINT.
+    signal.signal(signal.SIGTERM, lambda sig, frame: signal.raise_signal(signal.SIGINT))
     await startup_checks()
 
     async def keep_one_runner_running():

@@ -60,4 +60,14 @@ build {
       "rustup-init -y",
     ]
   }
+
+  //create a /Users/runner to see if we can trick GH into installing things in the toolcache
+  provisioner "shell" {
+    inline = [
+      "sudo mkdir /Users/runner",
+      "sudo chown admin:staff /Users/runner",
+      "sudo chmod 750 /Users/runner",
+    ]
+  }
+
 }

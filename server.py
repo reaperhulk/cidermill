@@ -66,7 +66,8 @@ async def get_registration_token(config: typing.Dict) -> str:
         response_data = res.json()
         endpoint_token = response_data["token"]
         res = await client.post(
-            "https://api.github.com/repos/pyca/cryptography/actions/runners/registration-token",
+            f"https://api.github.com/repos/"
+            f"{config['repository']}/actions/runners/registration-token",
             headers={
                 "Accept": "application/vnd.github.v3+json",
                 "Authorization": f"Bearer {endpoint_token}",
@@ -200,7 +201,7 @@ async def run_runner_then_cancel(config: typing.Dict, runner_name: str, cancel_s
                         "UserKnownHostsFile=/dev/null",
                         f"{config['user']}@{ip}",
                         f"~/runner-launcher.sh {token} "
-                        f"{runner_name} {config['repository_url']} "
+                        f"{runner_name} https://github.com/{config['repository']} "
                         f"{config['labels']}",
                     ],
                     check=False,

@@ -2,7 +2,7 @@
 base_image = "base_image_name"
 user = "image_user"
 runner_base_name = "base_name_to_prefix"
-repository_url = "https://github.com/org/repo"
+repository = "org/repo"
 # GitHub application information
 app_id = "app_id"
 # relative to this config file

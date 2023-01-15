@@ -6,7 +6,7 @@ BASE_DIR = os.path.dirname(__file__)
 with open(os.path.join(BASE_DIR, "files", "launchd.template"), "r") as f:
     template = Template(f.read())
 
-label = "tart-gha-ephemeral-runner"
+label = "cidermill"
 
 output = template.substitute(
     label=label,

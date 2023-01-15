@@ -1,5 +1,5 @@
 # Building a Tart VM
-This section explains how to build a VM, which is a subcomponent of the tart GitHub actions ephemeral runner project. Check out the parent README for more information.
+This section explains how to build a macOS VM for use with CiderMill. Check out the parent README for more information.
 
 ## Setup and Installation
 This builds OCI compatible images that can be pushed to OCI registries, but chances are you just want to keep a local copy, so this guide assumes you're going to run these commands on the same host that you are going to spawn VMs. If that's not the case, congratulations on your operational maturity and I hope you have a lot of bandwidth.

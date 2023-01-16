@@ -33,7 +33,7 @@ There is a helper script called `svc.sh`, which contains tools for executing thi
 * start -- Starts the previously installed service.
 * stop -- It is a mystery.
 * status -- Tells you whether the service is installed and whether launchctl thinks it is running.
-* tail -- prints the tail command so you can look at the logs. Why doesn't it simply tail it? I am bad at shell, that's why.
+* tail -- Prints the tail command so you can look at the logs. Why doesn't it simply tail it? I am bad at shell, that's why.
 
 **Note:** If you're running on Ventura you may see a "Background Items Added" message appear when you install the plist (it moves the file into `~/Library/LaunchAgents`). Depending on whether the Python you're using is code signed you might see an odd message like "Software from "Ned Deily"". Good times.
 
@@ -47,7 +47,6 @@ The GitHub Actions runner will automatically apply the first 3 tags, but any oth
 ### Future features if I feel like it
 * Support PATs in addition to GitHub Apps (both classic and fine-grained)
 * Support org-level runners instead of just repository runners (this is just a different endpoint)
-* Make the launchd scripts better and have install/uninstall/status options.
 * Make an entirely GHA compatible default image by exploiting their [existing packer scripts](https://github.com/actions/runner-images/blob/main/images/macos/templates). Images from Cirrus use user "admin", where GHA expects `/Users/runner`. Our packer scripts create an empty `/Users/runner` to fool things like `setup-python`, but there's no guarantee of broad compatibility.
 
 This project was built to fit the needs of [PyCA](https://github.com/pyca). Thanks to njs for the assistance with trio!

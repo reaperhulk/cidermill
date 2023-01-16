@@ -21,11 +21,21 @@ If you don't want to manually invoke, see the next section.
 
 ## Running via launchd
 
-* Run `venv/bin/python generate_launchd.py` and then copy the resulting file into `~/Library/LaunchAgents` and run `launchctl load ~/Library/LaunchAgents/cidermill.plist`. This will immediately launch the runner (and will auto-launch it at boot).
+There is a helper script called `svc.sh`, which contains tools for executing this via launchd. You **must** install the dependencies into a virtual environment named `venv` as described above or else this will fail due to bad paths.
 
-There is also an optional file `.path`, which, if it exists, will be loaded as the `PATH` variable for the running Python process. This is useful in contexts where you don't have a login shell (e.g. a launchd agent). You can create this from a shell where you have the right `PATH` with `echo $PATH > .path`.
+* `echo $PATH > .path` from a shell where the basic invocation works (e.g. you have all the expected `PATH`). This will create a file that `server.py` loads to populate its own `PATH` at runtime. This is useful in contexts where you don't have a login shell (e.g. a launchd agent like we're currently creating)
+* Run `./svc.sh install`
+* That's it!
 
-**Note:** If you're running on Ventura you'll see a "Background Items Added" message appear when you move the plist into `~/Library/LaunchAgents`. Depending on whether the Python you're using is code signed you might see an odd message like "Software from "Ned Deily"". Good times.
+`svc.sh` supports the following commands:
+* install -- Creates and installs the launchd plist. This will automatically start the service.
+* uninstall -- Stops the service and deletes the plist.
+* start -- Starts the previously installed service.
+* stop -- It is a mystery.
+* status -- Tells you whether the service is installed and what launchtctl's output is.
+* tail -- prints the tail command so you can look at the logs. Why doesn't it simply tail it? I am bad at shell, that's why.
+
+**Note:** If you're running on Ventura you'll see a "Background Items Added" message appear when you install the plist (it moves the file into `~/Library/LaunchAgents`). Depending on whether the Python you're using is code signed you might see an odd message like "Software from "Ned Deily"". Good times.
 
 ## Using it
 Once you have a connected runner you can invoke it from a workflow with the correct runs-on key:
@@ -41,3 +51,10 @@ The GitHub Actions runner will automatically apply the first 3 tags, but any oth
 * Make an entirely GHA compatible default image by exploiting their [existing packer scripts](https://github.com/actions/runner-images/blob/main/images/macos/templates). Images from Cirrus use user "admin", where GHA expects `/Users/runner`. Our packer scripts create an empty `/Users/runner` to fool things like `setup-python`, but there's no guarantee of broad compatibility.
 
 This project was built to fit the needs of [PyCA](https://github.com/pyca). Thanks to njs for the assistance with trio!
+
+### FAQ
+**How do I delete the old runners from GitHub?**
+GitHub automatically cleans up ephemeral runners one day after they last connected.
+
+**How do I make a GitHub application and what permissions does it need?**
+The [actions-runner-controller](https://github.com/actions/actions-runner-controller) folks have [good documentation](https://github.com/actions/actions-runner-controller/blob/2e406e3aefa8dad6e2b8926a3bbc51b613aa1af1/docs/authenticating-to-the-github-api.md) about the permissions required along with some links.

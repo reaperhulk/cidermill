@@ -3,22 +3,22 @@
 <plist version="1.0">
   <dict>
     <key>Label</key>
-    <string>$label</string>
+    <string>{{SvcName}}</string>
     <key>ProgramArguments</key>
     <array>
-      <string>$python</string>
-      <string>$server</string>
+      <string>{{RunnerRoot}}/venv/bin/python</string>
+      <string>{{RunnerRoot}}/server.py</string>
     </array>
     <key>UserName</key>
-    <string>$user</string>
+    <string>{{User}}</string>
     <key>WorkingDirectory</key>
-    <string>$working_directory</string>
+    <string>{{RunnerRoot}}</string>
     <key>RunAtLoad</key>
     <true/>
     <key>StandardOutPath</key>
-    <string>$home/Library/Logs/$label/stdout.log</string>
+    <string>{{UserHome}}/Library/Logs/{{SvcName}}/stdout.log</string>
     <key>StandardErrorPath</key>
-    <string>$home/Library/Logs/$label/stderr.log</string>
+    <string>{{UserHome}}/Library/Logs/{{SvcName}}/stderr.log</string>
     <key>ProcessType</key>
     <string>Interactive</string>
     <key>SessionCreate</key>

@@ -24,18 +24,18 @@ If you don't want to manually invoke, see the next section.
 There is a helper script called `svc.sh`, which contains tools for executing this via launchd. You **must** install the dependencies into a virtual environment named `venv` as described above or else this will fail due to bad paths.
 
 * `echo $PATH > .path` from a shell where the basic invocation works (e.g. you have all the expected `PATH`). This will create a file that `server.py` loads to populate its own `PATH` at runtime. This is useful in contexts where you don't have a login shell (e.g. a launchd agent like we're currently creating)
-* Run `./svc.sh install`
-* That's it!
+* Run `./svc.sh install` to install the launchd agent.
+* Run `./svc.sh start` to start it up.
 
 `svc.sh` supports the following commands:
-* install -- Creates and installs the launchd plist. This will automatically start the service.
+* install -- Creates and installs the launchd plist.
 * uninstall -- Stops the service and deletes the plist.
 * start -- Starts the previously installed service.
 * stop -- It is a mystery.
-* status -- Tells you whether the service is installed and what launchtctl's output is.
+* status -- Tells you whether the service is installed and whether launchctl thinks it is running.
 * tail -- prints the tail command so you can look at the logs. Why doesn't it simply tail it? I am bad at shell, that's why.
 
-**Note:** If you're running on Ventura you'll see a "Background Items Added" message appear when you install the plist (it moves the file into `~/Library/LaunchAgents`). Depending on whether the Python you're using is code signed you might see an odd message like "Software from "Ned Deily"". Good times.
+**Note:** If you're running on Ventura you may see a "Background Items Added" message appear when you install the plist (it moves the file into `~/Library/LaunchAgents`). Depending on whether the Python you're using is code signed you might see an odd message like "Software from "Ned Deily"". Good times.
 
 ## Using it
 Once you have a connected runner you can invoke it from a workflow with the correct runs-on key:

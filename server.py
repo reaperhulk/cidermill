@@ -55,7 +55,8 @@ async def generate_jwt(config: typing.Dict) -> str:
 async def get_registration_token(config: typing.Dict) -> str:
     log("Requesting new runner registration-token to github ...")
     app_token = await generate_jwt(config)
-    async with httpx.AsyncClient() as client:
+    transport = httpx.AsyncHTTPTransport(retries=1500)
+    async with httpx.AsyncClient(transport=transport) as client:
         res = await client.post(
             f"https://api.github.com/app/installations/{config['installation_id']}/access_tokens",
             headers={

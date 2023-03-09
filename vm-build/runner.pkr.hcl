@@ -43,15 +43,6 @@ build {
     ]
   }
 
-  // install whatever you want (feel free to delete this)
-  provisioner "shell" {
-    inline = [
-      "source ~/.zprofile",
-      "curl https://www.python.org/ftp/python/3.11.1/python-3.11.1-macos11.pkg -o python.pkg",
-      "sudo installer -pkg python.pkg -target /",
-    ]
-  }
-
   //install rust
   provisioner "shell" {
     inline = [

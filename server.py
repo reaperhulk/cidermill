@@ -179,7 +179,9 @@ async def log_output(runner_process: trio.Process, runner_name: str):
 
 async def run_vm_then_cancel(runner_name: str, cancel_scope):
     try:
-        await trio.run_process(["tart", "run", runner_name, "--no-graphics"])
+        await trio.run_process(
+            ["tart", "run", runner_name, "--no-graphics"], check=False
+        )
     finally:
         cancel_scope.cancel()
 

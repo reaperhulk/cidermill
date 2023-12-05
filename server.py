@@ -1,5 +1,6 @@
 import binascii
 import codecs
+import datetime
 import os
 import signal
 import subprocess
@@ -242,8 +243,18 @@ async def main(config: typing.Dict):
     await startup_checks()
 
     async def keep_one_runner_running():
+        retries = 0
         while True:
-            await runner(config)
+            try:
+                await runner(config)
+                retries = 0
+            except Exception as e:
+                log("Exception propagated to top level, restarting runner.")
+                log(e)
+                retries += 1
+                log(f"Sleeping {2 ** retries} seconds before retrying")
+                await trio.sleep(2 ** retries)
+                continue
 
     async with trio.open_nursery() as nursery:
         nursery.start_soon(signal_handler)
